@@ -1,0 +1,9 @@
+{
+	"name": "df-byu",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "fcbb36fd-da83-4ced-90a3-a836fe8cbe7e",
+		"tenantId": "0fd78a89-8a75-47e9-959a-f183656b3cb0"
+	}
+}
