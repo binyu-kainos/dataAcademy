@@ -60,6 +60,11 @@
 				]
 			}
 		],
+		"parameters": {
+			"windowStart": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
