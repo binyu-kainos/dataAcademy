@@ -1,0 +1,19 @@
+{
+	"name": "DataFlowDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataFlowDS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "bronze/sales/orders",
+				"fileSystem": "datalake"
+			}
+		},
+		"schema": {}
+	}
+}

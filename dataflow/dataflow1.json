@@ -1,0 +1,62 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DataFlowDS",
+						"type": "DatasetReference"
+					},
+					"name": "OrdersDataSource",
+					"description": "Import data from CustomersDSJson"
+				},
+				{
+					"dataset": {
+						"referenceName": "XMLDataFlowDS",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersDataSource",
+					"description": "Import data from XmlCustomersDS"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "DerivePriceAndCurrency",
+					"description": "Creating/updating the columns 'id, date, value, customer_id, product_id, currency'"
+				},
+				{
+					"name": "CalculateValueInGbp",
+					"description": "Creating/updating the columns 'id, date, value, customer_id, product_id, currency, valueInGbp'"
+				},
+				{
+					"name": "SelectColumns",
+					"description": "Renaming CalculateValueInGbp to SelectColumns with columns 'id, date, customer_id, product_id, value'"
+				}
+			],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> OrdersDataSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     validationMode: 'none',",
+				"     namespaces: true) ~> CustomersDataSource",
+				"OrdersDataSource derive(currency = left(value, 1),",
+				"          value = toDecimal(dropLeft(value, 1))) ~> DerivePriceAndCurrency",
+				"DerivePriceAndCurrency derive(valueInGbp = toDecimal(iif(currency == '€', value * 0.84, iif(currency == '$', value * 0.77, value)))) ~> CalculateValueInGbp",
+				"CalculateValueInGbp select(mapColumn(",
+				"          currency,",
+				"          value,",
+				"          valueInGbp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns"
+			]
+		}
+	}
+}

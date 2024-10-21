@@ -1,0 +1,19 @@
+{
+	"name": "XMLDataFlowDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataFlowDS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "customers.xml",
+				"folderPath": "bronze/sales",
+				"fileSystem": "datalake"
+			}
+		}
+	}
+}
