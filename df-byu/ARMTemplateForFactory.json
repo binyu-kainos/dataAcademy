@@ -608,6 +608,324 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FlattenToCsv')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "JsonToCSV",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "bronze/lukaszke/weather/*",
+									"wildcardFileName": "*.json",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['properties']['units']"
+										},
+										"sink": {
+											"name": "units"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['forecastGenerator']"
+										},
+										"sink": {
+											"name": "forecastGenerator"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['generatedAt']"
+										},
+										"sink": {
+											"name": "generatedAt"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['updateTime']"
+										},
+										"sink": {
+											"name": "updateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['validTimes']"
+										},
+										"sink": {
+											"name": "validTimes"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['elevation']['unitCode']"
+										},
+										"sink": {
+											"name": "properties_elevation_unitCode"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['elevation']['value']"
+										},
+										"sink": {
+											"name": "properties_elevation_value"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['number']"
+										},
+										"sink": {
+											"name": "number"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['startTime']"
+										},
+										"sink": {
+											"name": "startTime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['endTime']"
+										},
+										"sink": {
+											"name": "endTime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['isDaytime']"
+										},
+										"sink": {
+											"name": "isDaytime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['temperature']"
+										},
+										"sink": {
+											"name": "temperature"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['temperatureUnit']"
+										},
+										"sink": {
+											"name": "temperatureUnit"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['temperatureTrend']"
+										},
+										"sink": {
+											"name": "temperatureTrend"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['probabilityOfPrecipitation']['unitCode']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['probabilityOfPrecipitation_unitCode"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['probabilityOfPrecipitation']['value']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['probabilityOfPrecipitation_value"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['dewpoint']['unitCode']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['dewpoint_unitCode"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['dewpoint']['value']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['dewpoint_value"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['relativeHumidity']['unitCode']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['relativeHumidity_unitCode"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['relativeHumidity']['value']"
+										},
+										"sink": {
+											"name": "properties_periods'][0]['relativeHumidity_value"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['windSpeed']"
+										},
+										"sink": {
+											"name": "windSpeed"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['windDirection']"
+										},
+										"sink": {
+											"name": "windDirection"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['icon']"
+										},
+										"sink": {
+											"name": "icon"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['shortForecast']"
+										},
+										"sink": {
+											"name": "shortForecast"
+										}
+									},
+									{
+										"source": {
+											"path": "$['properties']['periods'][0]['detailedForecast']"
+										},
+										"sink": {
+											"name": "detailedForecast"
+										}
+									}
+								],
+								"collectionReference": "$['properties']['periods']"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Json2",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataSetCsv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Json2')]",
+				"[concat(variables('factoryId'), '/datasets/DataSetCsv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataSetCsv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "@concat('weather-info-for-day', '.csv')",
+						"folderPath": {
+							"value": "@concat('silver/byu/', string(dayOfMonth(utcNow())))",
+							"type": "Expression"
+						},
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
 		}
 	]
 }
