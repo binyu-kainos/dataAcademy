@@ -1,0 +1,27 @@
+{
+	"name": "DataSetCsv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "@concat('weather-info-for-day', '.csv')",
+				"folderPath": {
+					"value": "@concat('silver/byu/', string(dayOfMonth(utcNow())))",
+					"type": "Expression"
+				},
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
