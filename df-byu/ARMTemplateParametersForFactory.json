@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df-byu"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"DataFlowDS_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://dpp24.dfs.core.windows.net/"
+		},
+		"DataFlowDS_properties_typeProperties_url": {
+			"value": "https://mdtest4321.dfs.core.windows.net/"
+		},
+		"weather_properties_typeProperties_url": {
+			"value": "https://api.weather.gov"
+		}
+	}
+}
