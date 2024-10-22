@@ -51,9 +51,9 @@
 						"referenceName": "Json1",
 						"type": "DatasetReference",
 						"parameters": {
-							"cw_fileName": "weather_@{formatDateTime(pipeline().parameters.windowStart,'HH')}:@{formatDateTime(pipeline().parameters.windowStart,'mm')}.json",
+							"cw_fileName": "weather_@@{formatDateTime(pipeline().parameters.windowStart,'HH')}:@@{formatDateTime(pipeline().parameters.windowStart,'mm')}.json",
 							"cw_folderPath": {
-								"value": "bronze/byu/weather/@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}-@{formatDateTime(pipeline().parameters.windowStart,'MM')}-@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
+								"value": "bronze/byu/weather/@@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}-@@{formatDateTime(pipeline().parameters.windowStart,'MM')}-@@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
 								"type": "Expression"
 							}
 						}
