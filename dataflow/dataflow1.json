@@ -21,7 +21,16 @@
 					"description": "Import data from XmlCustomersDS"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"name": "SinkByCountry",
+					"description": "Export data to RaportByCountry"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DerivePriceAndCurrency"
@@ -33,6 +42,30 @@
 				{
 					"name": "SelectColumns",
 					"description": "Renaming CalculateValueInGbp to SelectColumns with columns 'id, date, customer_id, product_id, value'"
+				},
+				{
+					"name": "FlattenCustomerData",
+					"description": "Unrolling arrays from customers.customer to  with columns 'id, lastname, name, age, city, country, postcode, street, building'"
+				},
+				{
+					"name": "JoinOrdersAndCustomers",
+					"description": "Inner join on 'FlattenCustomerData' and 'SelectColumns'"
+				},
+				{
+					"name": "CustomersWithOrders",
+					"description": "Customers With Orders For 2021"
+				},
+				{
+					"name": "SelectColumnsForCustomersWithOrders",
+					"description": "Renaming CustomersWithOrders to SelectColumnsForCustomersWithOrders with columns 'id, lastname, name, age, city, country, postcode, street, building'"
+				},
+				{
+					"name": "JoinWithOrders2",
+					"description": "Inner join on 'SelectColumnsForCustomersWithOrders' and 'SelectColumns'"
+				},
+				{
+					"name": "AggregateByCountry",
+					"description": "Aggregating data by 'country' producing columns 'number_of_orders, total_value, average_order_value'"
 				}
 			],
 			"scriptLines": [
@@ -66,7 +99,57 @@
 				"          value = valueInGbp",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectColumns"
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"CustomersDataSource foldDown(unroll(customers.customer),",
+				"     mapColumn(",
+				"          id = customers.customer.id,",
+				"          lastname = customers.customer.person.lastname,",
+				"          name = customers.customer.person.name,",
+				"          age = customers.customer.person.age,",
+				"          city = customers.customer.address.city,",
+				"          country = customers.customer.address.country,",
+				"          postcode = customers.customer.address.postcode,",
+				"          street = customers.customer.address.street,",
+				"          building = customers.customer.address.building",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FlattenCustomerData",
+				"FlattenCustomerData, SelectColumns join(FlattenCustomerData@id == customer_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinOrdersAndCustomers",
+				"JoinOrdersAndCustomers filter(year(date) == 2021) ~> CustomersWithOrders",
+				"CustomersWithOrders select(mapColumn(",
+				"          id = FlattenCustomerData@id,",
+				"          lastname,",
+				"          name,",
+				"          age,",
+				"          city,",
+				"          country,",
+				"          postcode,",
+				"          street,",
+				"          building",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnsForCustomersWithOrders",
+				"SelectColumnsForCustomersWithOrders, SelectColumns join(SelectColumnsForCustomersWithOrders@id == customer_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinWithOrders2",
+				"JoinWithOrders2 aggregate(groupBy(country),",
+				"     number_of_orders = count(),",
+				"          total_value = sum(value),",
+				"          average_order_value = toDecimal(avg(value))) ~> AggregateByCountry",
+				"AggregateByCountry sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['raport_by_country.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkByCountry"
 			]
 		}
 	}
