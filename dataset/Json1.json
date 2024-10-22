@@ -18,8 +18,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@@dataset().cw_fileName",
-				"folderPath": "@@dataset().cw_folderPath",
+				"fileName": "@dataset().cw_fileName",
+				"folderPath": "@dataset().cw_folderPath",
 				"fileSystem": "datalake"
 			}
 		},
