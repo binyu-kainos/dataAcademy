@@ -24,8 +24,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "DerivePriceAndCurrency",
-					"description": "Creating/updating the columns 'id, date, value, customer_id, product_id, currency'"
+					"name": "DerivePriceAndCurrency"
 				},
 				{
 					"name": "CalculateValueInGbp",
@@ -37,7 +36,14 @@
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          id as string,",
+				"          date as string,",
+				"          value as string,",
+				"          customer_id as string,",
+				"          product_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> OrdersDataSource",
