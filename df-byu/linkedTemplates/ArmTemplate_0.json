@@ -125,7 +125,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"name": "[concat(parameters('factoryName'), '/DataSetCsv')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -133,78 +133,30 @@
 					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"cw_fileName": {
-						"type": "string"
-					},
-					"cw_folderPath": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "Json",
+				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": {
-							"value": "@dataset().cw_fileName",
+							"value": "@concat('weather-info-for-day', '.csv')",
 							"type": "Expression"
 						},
 						"folderPath": {
-							"value": "@dataset().cw_folderPath",
+							"value": "@concat('silver/byu/', string(dayOfMonth(utcNow())))",
 							"type": "Expression"
 						},
 						"fileSystem": "datalake"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RestResource1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "weather",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "https://api.weather.gov/gridpoints/OKX/36,36/forecast/hourly"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/weather')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/XMLDataFlowDS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataFlowDS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Xml",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "customers.xml",
-						"folderPath": "bronze/sales",
-						"fileSystem": "datalake"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataFlowDS')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -266,6 +218,45 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_fileName": {
+						"type": "string"
+					},
+					"cw_folderPath": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().cw_fileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().cw_folderPath",
+							"type": "Expression"
+						},
+						"fileSystem": "datalake"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Json2')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -284,38 +275,6 @@
 					}
 				},
 				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataSetCsv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "@concat('weather-info-for-day', '.csv')",
-						"folderPath": {
-							"value": "@concat('silver/byu/', string(dayOfMonth(utcNow())))",
-							"type": "Expression"
-						},
-						"fileSystem": "datalake"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
@@ -347,275 +306,47 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/WeatherCopy')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/RestResource1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": ""
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResource1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Json1",
-								"type": "DatasetReference",
-								"parameters": {
-									"cw_fileName": "weather_@{formatDateTime(pipeline().parameters.windowStart,'HH')}:@{formatDateTime(pipeline().parameters.windowStart,'mm')}.json",
-									"cw_folderPath": {
-										"value": "bronze/byu/weather/@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}-@{formatDateTime(pipeline().parameters.windowStart,'MM')}-@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
+				"linkedServiceName": {
+					"referenceName": "weather",
+					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"windowStart": {
-						"type": "string"
-					}
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "https://api.weather.gov/gridpoints/OKX/36,36/forecast/hourly"
 				},
-				"annotations": []
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/RestResource1')]",
-				"[concat(variables('factoryId'), '/datasets/Json1')]"
+				"[concat(variables('factoryId'), '/linkedServices/weather')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/XMLDataFlowDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
+				"linkedServiceName": {
+					"referenceName": "DataFlowDS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Xml",
 				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DataFlowDS",
-								"type": "DatasetReference"
-							},
-							"name": "OrdersDataSource",
-							"description": "Import data from CustomersDSJson"
-						},
-						{
-							"dataset": {
-								"referenceName": "XMLDataFlowDS",
-								"type": "DatasetReference"
-							},
-							"name": "CustomersDataSource",
-							"description": "Import data from XmlCustomersDS"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DelimitedText1",
-								"type": "DatasetReference"
-							},
-							"name": "SinkByCountry",
-							"description": "Export data to RaportByCountry"
-						},
-						{
-							"dataset": {
-								"referenceName": "DelimitedText2",
-								"type": "DatasetReference"
-							},
-							"name": "SinkRaportByCustomers",
-							"description": "Export data to RaportByCustomers"
-						}
-					],
-					"transformations": [
-						{
-							"name": "DerivePriceAndCurrency"
-						},
-						{
-							"name": "CalculateValueInGbp",
-							"description": "Creating/updating the columns 'id, date, value, customer_id, product_id, currency, valueInGbp'"
-						},
-						{
-							"name": "SelectColumns",
-							"description": "Renaming CalculateValueInGbp to SelectColumns with columns 'id, date, customer_id, product_id, value'"
-						},
-						{
-							"name": "FlattenCustomerData",
-							"description": "Unrolling arrays from customers.customer to  with columns 'id, lastname, name, age, city, country, postcode, street, building'"
-						},
-						{
-							"name": "JoinOrdersAndCustomers",
-							"description": "Inner join on 'FlattenCustomerData' and 'SelectColumns'"
-						},
-						{
-							"name": "CustomersWithOrders",
-							"description": "Customers With Orders For 2021"
-						},
-						{
-							"name": "SelectColumnsForCustomersWithOrders",
-							"description": "Renaming CustomersWithOrders to SelectColumnsForCustomersWithOrders with columns 'id, lastname, name, age, city, country, postcode, street, building'"
-						},
-						{
-							"name": "JoinWithOrders2",
-							"description": "Inner join on 'SelectColumnsForCustomersWithOrders' and 'SelectColumns'"
-						},
-						{
-							"name": "AggregateByCountry",
-							"description": "Aggregating data by 'country' producing columns 'number_of_orders, total_value, average_order_value'"
-						},
-						{
-							"name": "AggregateByCustomers"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          customer_id as string,",
-						"          date as date,",
-						"          id as long,",
-						"          product_id as integer,",
-						"          value as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     documentForm: 'documentPerLine') ~> OrdersDataSource",
-						"source(output(",
-						"          customers as (customer as (address as (building as integer, city as string, country as string, postcode as integer, street as string), id as string, person as (age as short, lastname as string, name as string))[])",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     validationMode: 'none',",
-						"     namespaces: true) ~> CustomersDataSource",
-						"OrdersDataSource derive(currency = left(value, 1),",
-						"          value = toDecimal(dropLeft(value, 1))) ~> DerivePriceAndCurrency",
-						"DerivePriceAndCurrency derive(valueInGbp = toDecimal(iif(currency == '€', value * 0.84, iif(currency == '$', value * 0.77, value)))) ~> CalculateValueInGbp",
-						"CalculateValueInGbp select(mapColumn(",
-						"          id,",
-						"          date,",
-						"          customer_id,",
-						"          product_id,",
-						"          value = valueInGbp",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-						"CustomersDataSource foldDown(unroll(customers.customer),",
-						"     mapColumn(",
-						"          id = customers.customer.id,",
-						"          lastname = customers.customer.person.lastname,",
-						"          name = customers.customer.person.name,",
-						"          age = customers.customer.person.age,",
-						"          city = customers.customer.address.city,",
-						"          country = customers.customer.address.country,",
-						"          postcode = customers.customer.address.postcode,",
-						"          street = customers.customer.address.street,",
-						"          building = customers.customer.address.building",
-						"     ),",
-						"     skipDuplicateMapInputs: false,",
-						"     skipDuplicateMapOutputs: false) ~> FlattenCustomerData",
-						"FlattenCustomerData, SelectColumns join(FlattenCustomerData@id == customer_id,",
-						"     joinType:'inner',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> JoinOrdersAndCustomers",
-						"JoinOrdersAndCustomers filter(year(date) == 2021) ~> CustomersWithOrders",
-						"CustomersWithOrders select(mapColumn(",
-						"          id = FlattenCustomerData@id,",
-						"          lastname,",
-						"          name,",
-						"          age,",
-						"          city,",
-						"          country,",
-						"          postcode,",
-						"          street,",
-						"          building",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnsForCustomersWithOrders",
-						"SelectColumnsForCustomersWithOrders, SelectColumns join(SelectColumnsForCustomersWithOrders@id == customer_id,",
-						"     joinType:'inner',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> JoinWithOrders2",
-						"JoinWithOrders2 aggregate(groupBy(country),",
-						"     number_of_orders = count(),",
-						"          total_value = sum(value),",
-						"          average_order_value = toDecimal(avg(value))) ~> AggregateByCountry",
-						"JoinWithOrders2 aggregate(groupBy(customer_id,",
-						"          lastname,",
-						"          name),",
-						"     avg_order_value = toDecimal(avg(value)),",
-						"          number_of_orders = count(),",
-						"          total_value = sum(value)) ~> AggregateByCustomers",
-						"AggregateByCountry sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['raport_by_country.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkByCountry",
-						"AggregateByCustomers sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['customer_raport.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkRaportByCustomers"
-					]
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "customers.xml",
+						"folderPath": "bronze/sales",
+						"fileSystem": "datalake"
+					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DataFlowDS')]",
-				"[concat(variables('factoryId'), '/datasets/XMLDataFlowDS')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText2')]"
+				"[concat(variables('factoryId'), '/linkedServices/DataFlowDS')]"
 			]
 		},
 		{
@@ -987,6 +718,278 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Json2')]",
 				"[concat(variables('factoryId'), '/datasets/ParquetBronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WeatherCopy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": ""
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestResource1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {
+									"cw_fileName": "weather_@@{formatDateTime(pipeline().parameters.windowStart,'HH')}:@@{formatDateTime(pipeline().parameters.windowStart,'mm')}.json",
+									"cw_folderPath": {
+										"value": "bronze/byu/weather/@@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}-@@{formatDateTime(pipeline().parameters.windowStart,'MM')}-@@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestResource1')]",
+				"[concat(variables('factoryId'), '/datasets/Json1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DataFlowDS",
+								"type": "DatasetReference"
+							},
+							"name": "OrdersDataSource",
+							"description": "Import data from CustomersDSJson"
+						},
+						{
+							"dataset": {
+								"referenceName": "XMLDataFlowDS",
+								"type": "DatasetReference"
+							},
+							"name": "CustomersDataSource",
+							"description": "Import data from XmlCustomersDS"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DelimitedText1",
+								"type": "DatasetReference"
+							},
+							"name": "SinkByCountry",
+							"description": "Export data to RaportByCountry"
+						},
+						{
+							"dataset": {
+								"referenceName": "DelimitedText2",
+								"type": "DatasetReference"
+							},
+							"name": "SinkRaportByCustomers",
+							"description": "Export data to RaportByCustomers"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivePriceAndCurrency"
+						},
+						{
+							"name": "CalculateValueInGbp",
+							"description": "Creating/updating the columns 'id, date, value, customer_id, product_id, currency, valueInGbp'"
+						},
+						{
+							"name": "SelectColumns",
+							"description": "Renaming CalculateValueInGbp to SelectColumns with columns 'id, date, customer_id, product_id, value'"
+						},
+						{
+							"name": "FlattenCustomerData",
+							"description": "Unrolling arrays from customers.customer to  with columns 'id, lastname, name, age, city, country, postcode, street, building'"
+						},
+						{
+							"name": "JoinOrdersAndCustomers",
+							"description": "Inner join on 'FlattenCustomerData' and 'SelectColumns'"
+						},
+						{
+							"name": "CustomersWithOrders",
+							"description": "Customers With Orders For 2021"
+						},
+						{
+							"name": "SelectColumnsForCustomersWithOrders",
+							"description": "Renaming CustomersWithOrders to SelectColumnsForCustomersWithOrders with columns 'id, lastname, name, age, city, country, postcode, street, building'"
+						},
+						{
+							"name": "JoinWithOrders2",
+							"description": "Inner join on 'SelectColumnsForCustomersWithOrders' and 'SelectColumns'"
+						},
+						{
+							"name": "AggregateByCountry",
+							"description": "Aggregating data by 'country' producing columns 'number_of_orders, total_value, average_order_value'"
+						},
+						{
+							"name": "AggregateByCustomers"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          customer_id as string,",
+						"          date as date,",
+						"          id as long,",
+						"          product_id as integer,",
+						"          value as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> OrdersDataSource",
+						"source(output(",
+						"          customers as (customer as (address as (building as integer, city as string, country as string, postcode as integer, street as string), id as string, person as (age as short, lastname as string, name as string))[])",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     validationMode: 'none',",
+						"     namespaces: true) ~> CustomersDataSource",
+						"OrdersDataSource derive(currency = left(value, 1),",
+						"          value = toDecimal(dropLeft(value, 1))) ~> DerivePriceAndCurrency",
+						"DerivePriceAndCurrency derive(valueInGbp = toDecimal(iif(currency == '€', value * 0.84, iif(currency == '$', value * 0.77, value)))) ~> CalculateValueInGbp",
+						"CalculateValueInGbp select(mapColumn(",
+						"          id,",
+						"          date,",
+						"          customer_id,",
+						"          product_id,",
+						"          value = valueInGbp",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"CustomersDataSource foldDown(unroll(customers.customer),",
+						"     mapColumn(",
+						"          id = customers.customer.id,",
+						"          lastname = customers.customer.person.lastname,",
+						"          name = customers.customer.person.name,",
+						"          age = customers.customer.person.age,",
+						"          city = customers.customer.address.city,",
+						"          country = customers.customer.address.country,",
+						"          postcode = customers.customer.address.postcode,",
+						"          street = customers.customer.address.street,",
+						"          building = customers.customer.address.building",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> FlattenCustomerData",
+						"FlattenCustomerData, SelectColumns join(FlattenCustomerData@id == customer_id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinOrdersAndCustomers",
+						"JoinOrdersAndCustomers filter(year(date) == 2021) ~> CustomersWithOrders",
+						"CustomersWithOrders select(mapColumn(",
+						"          id = FlattenCustomerData@id,",
+						"          lastname,",
+						"          name,",
+						"          age,",
+						"          city,",
+						"          country,",
+						"          postcode,",
+						"          street,",
+						"          building",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsForCustomersWithOrders",
+						"SelectColumnsForCustomersWithOrders, SelectColumns join(SelectColumnsForCustomersWithOrders@id == customer_id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinWithOrders2",
+						"JoinWithOrders2 aggregate(groupBy(country),",
+						"     number_of_orders = count(),",
+						"          total_value = sum(value),",
+						"          average_order_value = toDecimal(avg(value))) ~> AggregateByCountry",
+						"JoinWithOrders2 aggregate(groupBy(customer_id,",
+						"          lastname,",
+						"          name),",
+						"     avg_order_value = toDecimal(avg(value)),",
+						"          number_of_orders = count(),",
+						"          total_value = sum(value)) ~> AggregateByCustomers",
+						"AggregateByCountry sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['raport_by_country.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SinkByCountry",
+						"AggregateByCustomers sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['customer_raport.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SinkRaportByCustomers"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DataFlowDS')]",
+				"[concat(variables('factoryId'), '/datasets/XMLDataFlowDS')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText2')]"
 			]
 		},
 		{
