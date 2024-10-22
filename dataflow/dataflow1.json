@@ -29,6 +29,14 @@
 					},
 					"name": "SinkByCountry",
 					"description": "Export data to RaportByCountry"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "SinkRaportByCustomers",
+					"description": "Export data to RaportByCustomers"
 				}
 			],
 			"transformations": [
@@ -66,6 +74,9 @@
 				{
 					"name": "AggregateByCountry",
 					"description": "Aggregating data by 'country' producing columns 'number_of_orders, total_value, average_order_value'"
+				},
+				{
+					"name": "AggregateByCustomers"
 				}
 			],
 			"scriptLines": [
@@ -142,6 +153,12 @@
 				"     number_of_orders = count(),",
 				"          total_value = sum(value),",
 				"          average_order_value = toDecimal(avg(value))) ~> AggregateByCountry",
+				"JoinWithOrders2 aggregate(groupBy(customer_id,",
+				"          lastname,",
+				"          name),",
+				"     avg_order_value = toDecimal(avg(value)),",
+				"          number_of_orders = count(),",
+				"          total_value = sum(value)) ~> AggregateByCustomers",
 				"AggregateByCountry sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['raport_by_country.csv'],",
@@ -149,7 +166,15 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SinkByCountry"
+				"     skipDuplicateMapOutputs: true) ~> SinkByCountry",
+				"AggregateByCustomers sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['customer_raport.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkRaportByCustomers"
 			]
 		}
 	}
