@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_data_1",
+				"name": "CopyWeatherData",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
