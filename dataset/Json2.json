@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "bronze/byu/weather",
+				"folderPath": "bronze/byu/weather/2024-10-23",
 				"fileSystem": "datalake"
 			}
 		},
