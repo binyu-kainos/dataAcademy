@@ -46,6 +46,22 @@
 						"mappings": [
 							{
 								"source": {
+									"path": "$['@context'][0]"
+								},
+								"sink": {
+									"name": "@@context']["
+								}
+							},
+							{
+								"source": {
+									"path": "$['type']"
+								},
+								"sink": {
+									"name": "type"
+								}
+							},
+							{
+								"source": {
 									"path": "$['properties']['units']"
 								},
 								"sink": {
